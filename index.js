@@ -2,23 +2,25 @@ const d3 = require('d3')
 const createUsers = require('./resources/create_users.js')
 const createTree = require('./resources/create_tree.js')
 
-const users = createUsers(20)
+const users = createUsers(10)
 const treeData = createTree(users)
 
-// Set the dimensions and margins of the diagram
-const margin = {top: 20, right: 90, bottom: 30, left: 90}
-const width = 960 - margin.left - margin.right
-const height = 500 - margin.top - margin.bottom
+const bodyWidth = d3.select('body').node().getBoundingClientRect().width
+const bodyHeight = d3.select('body').node().getBoundingClientRect().height
 
-// append the svg object to the body of the page
+// Set the dimensions and margins of the diagram
+const margin = {top: 20, right: 90, bottom: 150, left: 120}
+const width = bodyWidth - margin.left - margin.right
+const height = bodyHeight - margin.top - margin.bottom
+
+// append the svg object to the page
 // appends a 'group' element to 'svg'
 // moves the 'group' element to the top left margin
 var svg = d3.select('#tree-container').append('svg')
   .attr('width', width + margin.right + margin.left)
   .attr('height', height + margin.top + margin.bottom)
   .append('g')
-    .attr('transform', 'translate(' +
-          margin.left + ',' + margin.top + ')')
+    .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
 
 let i = 0
 const duration = 750
@@ -55,7 +57,7 @@ function update (source) {
   let links = treeData.descendants().slice(1)
 
   // Normalize for fixed-depth.
-  nodes.forEach(function (d) { d.y = d.depth * 180 })
+  nodes.forEach(function (d) { d.y = d.depth * 150 })
 
   // ****************** Nodes section ***************************
 
@@ -80,7 +82,7 @@ function update (source) {
       .attr('dy', '.35em')
       .attr('x', (d) => d.children || d._children ? -13 : 13)
       .attr('text-anchor', (d) => d.children || d._children ? 'end' : 'start')
-      .text((d) => d.data.name)
+      .text((d) => `${d.data.firstName} ${d.data.lastName}`)
 
   // UPDATE
   let nodeUpdate = nodeEnter.merge(node)

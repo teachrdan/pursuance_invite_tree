@@ -12,28 +12,62 @@ const createInviteTree = function (users) {
   for (let i = 0; i < users.length; i++) {
     const user = users[i]
     user.children = []
+    // first user is always the root
     if (i === 0) {
-      // first user is always the root
+      // first user always has second user as their child
       user.children.push(users[1].id)
       // last user never has a child
     } else if (i < users.length - 1) {
-      // each user has 1 to 2 children
-      const numChildren = Math.floor(Math.random() * maxChildren + 1)
+      // NOTE this is broken for 0 children
+      // each user has between 1 and maxChildren number of children
+      const numChildren = Math.floor(Math.random() * maxChildren) + 1
       let nextUserIndex = i + 1
       while (user.children.length < numChildren && nextUserIndex < users.length) {
         const potentialChildID = users[nextUserIndex].id
-        if (storage[potentialChildID].parent === undefined) {
+        if (!storage[potentialChildID].parent) {
           user.children.push(potentialChildID)
         }
         nextUserIndex++
       }
     }
-    user.children.forEach(child => {
-      storage[child].parent = user.id
+    user.children.forEach(childID => {
+      storage[childID].parent = user.id
     })
-    results.push(user)
   }
-  return results
+  // TODO fix this
+  // helper function that makes it possible for users to have 0 children
+    // it finds users with no parent and assigns them a parent
+  const assignParent = function () {
+    const orphanIDs = []
+    const potentialParentIDs = []
+    for (let id in storage) {
+      if (!storage[id].parent) {
+        // find orphans
+        orphanIDs.push(id)
+      } else {
+        // find potential parents
+        let potentialParent = users.filter(user => user.id === id)[0]
+        if (potentialParent.children.length < maxChildren) {
+          potentialParentIDs.push(id)
+        }
+      }
+    }
+    // assign a parent to all orphanIDs
+    for (let i = 0; i < orphanIDs.length; i++) {
+      const randomParentIndex = Math.floor(Math.random() * potentialParentIDs.length)
+      const randomParentID = potentialParentIDs[randomParentIndex]
+      const randomParent = users.filter(user => user.id === randomParentID)[0]
+      console.log("randomParent", randomParent);
+      randomParent.children.push(orphanIDs[i])
+      if (randomParent.children.length === maxChildren) {
+        potentialParentIDs.splice(randomParentIndex, 1)
+      }
+    }
+  }
+
+  // TODO: uncomment this when fixed
+  // assignParent()
+  return users
 }
 
 const createUsers = function (num = 10) {
