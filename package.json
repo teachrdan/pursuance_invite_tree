@@ -10,6 +10,7 @@
   "author": "Dan Tennery-Spalding",
   "license": "ISC",
   "dependencies": {
-    "d3": "^5.5.0"
+    "d3": "^5.5.0",
+    "d3-hierarchy": "^1.1.6"
   }
 }

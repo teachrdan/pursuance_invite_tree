@@ -1,6 +1,7 @@
 const createInviteTree = function (users) {
   const results = []
   const storage = {}
+  const maxChildren = 3
   users.forEach(user => {
     storage[user.id] = {
       parent: undefined
@@ -17,7 +18,7 @@ const createInviteTree = function (users) {
       // last user never has a child
     } else if (i < users.length - 1) {
       // each user has 1 to 2 children
-      const numChildren = Math.floor(Math.random() * 2) + 1
+      const numChildren = Math.floor(Math.random() * maxChildren + 1)
       let nextUserIndex = i + 1
       while (user.children.length < numChildren && nextUserIndex < users.length) {
         const potentialChildID = users[nextUserIndex].id
